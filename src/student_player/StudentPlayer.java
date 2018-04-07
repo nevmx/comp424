@@ -4,12 +4,18 @@ import java.util.List;
 import java.util.Random;
 
 import boardgame.Move;
+import student_player.factory.AbstractFactory;
+import student_player.factory.MuscoviteFactory;
+import student_player.factory.SwedishFactory;
+import student_player.heuristics.AbstractHeuristic;
 import tablut.TablutBoardState;
 import tablut.TablutMove;
 import tablut.TablutPlayer;
 
 /** A player file submitted by a student. */
 public class StudentPlayer extends TablutPlayer {
+	
+	private AbstractHeuristic ah;
 
     /**
      * You must modify this constructor to return your student number. This is
@@ -27,7 +33,7 @@ public class StudentPlayer extends TablutPlayer {
      */
     public Move chooseMove(TablutBoardState bs) {
     	// Get heuristic function object
-    	AbstractHeuristic h = HeuristicFactory.getHeuristic(bs);
+    	AbstractHeuristic h = getHeuristic(bs);
     	
     	// Get all current legal moves
     	List<TablutMove> options = bs.getAllLegalMoves();
@@ -44,10 +50,10 @@ public class StudentPlayer extends TablutPlayer {
     	// Iterate over all options
     	for (TablutMove m : options) {
     		// Evaluate this option with the heuristic function
-    		// Choose the option that minimizes heuristic function
     		clonedBs = (TablutBoardState) bs.clone();
     		clonedBs.processMove(m);
     		
+    		// Choose the option that minimizes heuristic function
     		int heuristic = h.getHeuristicValue(bs, clonedBs);
     		if (heuristic < minHeuristic) {
     			minHeuristic = heuristic;
@@ -56,5 +62,20 @@ public class StudentPlayer extends TablutPlayer {
     	}
     	
         return bestMove;
+    }
+    
+    private AbstractHeuristic getHeuristic(TablutBoardState bs) {
+    	if (ah == null) {
+    		AbstractFactory af;
+        	if (bs.getOpponent() == TablutBoardState.MUSCOVITE) {
+        		af = new SwedishFactory();
+        	}
+        	else {
+        		af = new MuscoviteFactory();
+        	}
+        	ah = af.createHeuristic();
+    	}
+    	
+    	return ah;
     }
 }

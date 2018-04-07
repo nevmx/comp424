@@ -1,4 +1,4 @@
-package student_player;
+package student_player.heuristics;
 
 import tablut.TablutBoardState;
 
