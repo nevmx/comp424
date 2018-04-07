@@ -64,6 +64,11 @@ public class StudentPlayer extends TablutPlayer {
         return bestMove;
     }
     
+    /**
+     * Get heuristic function from the Abstract Factory.
+     * @param bs Current board state
+     * @return Heuristic function for given board state.
+     */
     private AbstractHeuristic getHeuristic(TablutBoardState bs) {
     	if (ah == null) {
     		AbstractFactory af;

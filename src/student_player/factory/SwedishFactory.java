@@ -8,6 +8,10 @@ public class SwedishFactory extends AbstractFactory {
 	private SwedishHeuristic sh;
 
 	@Override
+	/**
+	 * Constructs the Swedish heuristic function.
+	 * @return Swedish heuristic function
+	 */
 	public AbstractHeuristic createHeuristic() {
 		if (sh == null) {
 			sh = new SwedishHeuristic();
