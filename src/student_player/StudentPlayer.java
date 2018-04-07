@@ -1,7 +1,11 @@
 package student_player;
 
+import java.util.List;
+import java.util.Random;
+
 import boardgame.Move;
 import tablut.TablutBoardState;
+import tablut.TablutMove;
 import tablut.TablutPlayer;
 
 /** A player file submitted by a student. */
@@ -13,7 +17,7 @@ public class StudentPlayer extends TablutPlayer {
      * associate you with your agent. The constructor should do nothing else.
      */
     public StudentPlayer() {
-        super("xxxxxxxxx");
+        super("260621662");
     }
 
     /**
@@ -21,16 +25,36 @@ public class StudentPlayer extends TablutPlayer {
      * object contains the current state of the game, which your agent must use to
      * make decisions.
      */
-    public Move chooseMove(TablutBoardState boardState) {
-        // You probably will make separate functions in MyTools.
-        // For example, maybe you'll need to load some pre-processed best opening
-        // strategies...
-        MyTools.getSomething();
-
-        // Is random the best you can do?
-        Move myMove = boardState.getRandomMove();
-
-        // Return your move to be processed by the server.
-        return myMove;
+    public Move chooseMove(TablutBoardState bs) {
+    	// Get heuristic function object
+    	AbstractHeuristic h = HeuristicFactory.getHeuristic(bs);
+    	
+    	// Get all current legal moves
+    	List<TablutMove> options = bs.getAllLegalMoves();
+    	
+    	// Clone board state to process potential moves
+    	TablutBoardState clonedBs = (TablutBoardState) bs.clone();
+    	
+    	// Start with a random move
+    	Random r = new Random();
+    	Move bestMove = options.get(r.nextInt(options.size()));
+    	clonedBs.processMove((TablutMove) bestMove);
+    	int minHeuristic = h.getHeuristicValue(bs, clonedBs);
+    	
+    	// Iterate over all options
+    	for (TablutMove m : options) {
+    		// Evaluate this option with the heuristic function
+    		// Choose the option that minimizes heuristic function
+    		clonedBs = (TablutBoardState) bs.clone();
+    		clonedBs.processMove(m);
+    		
+    		int heuristic = h.getHeuristicValue(bs, clonedBs);
+    		if (heuristic < minHeuristic) {
+    			minHeuristic = heuristic;
+    			bestMove = m;
+    		}
+    	}
+    	
+        return bestMove;
     }
 }
